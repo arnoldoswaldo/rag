@@ -115,8 +115,8 @@ Deberías ver `pgvector-db` con estado `healthy`.
 proyecto_rag/
 ├── init/
 │   └── 01_init_pgvector.sql   # Habilita la extensión vector en PostgreSQL
-├── .venv/                     # Entorno virtual (no se sube a Git)
-├── .env                       # Variables de entorno (no se sube a Git)
+├── .venv/                     # Entorno virtual 
+├── .env                       # Variables de entorno 
 ├── .gitignore
 ├── docker-compose.yml
 ├── ingest.py                  # Carga, divide y almacena el PDF en PGVector
