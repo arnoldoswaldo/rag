@@ -1,0 +1,20 @@
+# RAG core
+langchain>=0.3.0
+langchain-core>=0.3.0
+langchain-community>=0.3.0
+langchain-text-splitters>=0.3.0
+
+# Integraciones
+langchain-postgres>=0.0.12
+langchain-google-genai>=2.0.0
+langgraph>=0.2.0
+
+# Base de datos
+psycopg[binary]>=3.1.0
+
+# PDF
+pypdf>=4.0.0
+
+# HTTP y utilidades
+requests>=2.32.0
+python-dotenv>=1.0.0

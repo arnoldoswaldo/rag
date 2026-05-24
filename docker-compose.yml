@@ -1,0 +1,31 @@
+# docker-compose.yml
+services:                          # sin 'version': está deprecado en Compose V2
+
+  db:
+    image: pgvector/pgvector:pg16
+    container_name: pgvector-db
+    restart: unless-stopped        # se recupera si crashea, para al hacer 'down'
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER:     langchain
+      POSTGRES_PASSWORD: langchain
+      POSTGRES_DB:       rag_db
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./init:/docker-entrypoint-initdb.d   # scripts SQL que corren al crear la BD
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U langchain -d rag_db"]
+      interval: 10s    # chequea cada 10 segundos
+      timeout: 5s      # falla si no responde en 5s
+      retries: 5       # reintenta 5 veces antes de marcar como unhealthy
+      start_period: 10s  # espera 10s antes del primer chequeo (tiempo de arranque)
+    networks:
+      - rag-network
+
+networks:
+  rag-network:
+    driver: bridge
+
+volumes:
+  pgdata:
