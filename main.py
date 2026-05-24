@@ -42,12 +42,11 @@ def _get_thread_id(args: list[str]) -> str:
 
 
 def main():
-    if len(sys.argv) < 3:           # necesitamos al menos: main.py <acción> <argumento>
+    if len(sys.argv) < 3:           
         print_usage()
         return
 
-    # ── Parsear argumentos ────────────────────────────────────────────────────
-    # Separamos flags conocidos para no contaminar el argumento principal
+    
     _known_flags = {"-d", "--download-first", "-f", "--force", "--thread"}
     raw_args = sys.argv[1:]
 
@@ -71,9 +70,8 @@ def main():
     action   = filtered[0].lower()
     argument = " ".join(filtered[1:]).strip()  # permite rutas con espacios
 
-    # ── INGEST ────────────────────────────────────────────────────────────────
+    # INGEST 
     if action == "ingest":
-        # Importación diferida: no necesitamos graph.py para ingestar
         from ingest import ingest_pdf
 
         if not argument:
@@ -102,9 +100,9 @@ def main():
             print(f"\n❗ Error al ingestar el documento: {exc}")
             sys.exit(1)
 
-    # ── QUERY ─────────────────────────────────────────────────────────────────
+    #  QUERY
     elif action == "query":
-        # Importación diferida: evita crash al arrancar si graph.py falla
+       
         try:
             from graph import rag_app
         except Exception as exc:
