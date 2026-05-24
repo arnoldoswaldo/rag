@@ -130,7 +130,7 @@ proyecto_rag/
 
 ## 🚀 Uso
 
-### Ingestar un documento PDF
+### Ingestar un documento PDF: Desde terminal o consola ejecutar los siguientes comandos 
 
 **Desde una URL:**
 ```bash
