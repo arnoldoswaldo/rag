@@ -6,12 +6,11 @@ from langchain_postgres import PGVector
 from langgraph.graph import StateGraph, START, END
 from langgraph.checkpoint.memory import MemorySaver
 
-# ── Configuración ─────────────────────────────────────────────────────────────
+#Configuración 
 CONNECTION_STRING = "postgresql+psycopg://langchain:langchain@localhost:5432/rag_db"
 COLLECTION_NAME   = "rag_collection"
 
-# ── Recursos compartidos (se crean una sola vez) ──────────────────────────────
-# Evita reinstanciar embeddings y vectorstore en cada llamada al grafo
+# Recursos compartidos 
 _embeddings = GoogleGenerativeAIEmbeddings(model="gemini-embedding-001")
 
 _vectorstore = PGVector(
@@ -25,16 +24,16 @@ _retriever = _vectorstore.as_retriever(search_kwargs={"k": 3})
 
 _llm = ChatGoogleGenerativeAI(
     model="gemini-2.5-flash", 
-    temperature=0,                    # respuestas más deterministas para RAG
+    temperature=0,                    
 )
 
-# ── Estado de la aplicación ───────────────────────────────────────────────────
+# Estado de la aplicación 
 class RAGState(TypedDict):
     question: str
     context:  List[Document]
     response: str
 
-# ── Nodo de Recuperación ──────────────────────────────────────────────────────
+# Nodo de Recuperación 
 def retrieve_node(state: RAGState) -> dict:
     print("🔍 [Nodo: Recuperación] Buscando contexto en PGVector...")
     try:
@@ -52,7 +51,7 @@ def retrieve_node(state: RAGState) -> dict:
     print(f"   → {len(retrieved_docs)} fragmento(s) recuperado(s).")
     return {"context": retrieved_docs}
 
-# ── Nodo de Generación ────────────────────────────────────────────────────────
+# Nodo de Generación 
 _PROMPT_TEMPLATE = """\
 Eres un asistente experto que responde preguntas basándose ÚNICAMENTE en el contexto proporcionado.
 Si la respuesta no se encuentra en el contexto, responde exactamente:
@@ -95,7 +94,7 @@ def generate_node(state: RAGState) -> dict:
 
     return {"response": response.content}
 
-# ── Orquestación con LangGraph ────────────────────────────────────────────────
+#  LangGraph 
 workflow = StateGraph(RAGState)
 workflow.add_node("retrieve", retrieve_node)
 workflow.add_node("generate", generate_node)
@@ -104,7 +103,6 @@ workflow.add_edge(START, "retrieve")
 workflow.add_edge("retrieve", "generate")
 workflow.add_edge("generate", END)
 
-# MemorySaver habilita el thread_id que pasa main.py
-# (permite conversaciones independientes por hilo)
+# Memoria
 _checkpointer = MemorySaver()
 rag_app = workflow.compile(checkpointer=_checkpointer)
